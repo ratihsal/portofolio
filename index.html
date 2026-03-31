@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ratih Salsabila | Portfolio</title>
+
+  <!-- FONTS -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- REACT -->
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+  <!-- TAILWIND -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --primary: #0a0a1a;
+      --secondary: #1a143a;
+      --accent: #a78bfa;
+      --gold: #f4c430;
+      --glass: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #e2e8f0;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+    }
+
+    .neon-text {
+      background: linear-gradient(135deg, #a78bfa, #f4c430);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .skill-bar {
+      background: rgba(255, 255, 255, 0.1);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .skill-progress {
+      background: linear-gradient(90deg, #a78bfa, #f4c430);
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.8s ease;
+    }
+
+    .nav-solid {
+      background: rgba(10, 10, 26, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+    }
+
+    section {
+      padding-top: 110px;
+    }
+
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      background: #a78bfa;
+      border-radius: 50%;
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content-layer {
+      position: relative;
+      z-index: 2;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function App() {
+      const [isDesktop, setIsDesktop] = React.useState(false);
+      const [text, setText] = React.useState("");
+      const [charIndex, setCharIndex] = React.useState(0);
+      const [roleIndex, setRoleIndex] = React.useState(0);
+
+      const roles = ["Web Developer", "Java Programmer", "UI/UX Designer"];
+
+      const skills = [
+        { name: "JavaScript", progress: 76 },
+        { name: "Java OOP", progress: 80 },
+        { name: "HTML", progress: 84 },
+        { name: "UI/UX Design", progress: 78 },
+        { name: "Mobile Development", progress: 70 }
+      ];
+
+      const projects = [
+        {
+          title: "Object-Oriented Programming",
+          desc: "Modern Java library app",
+          tech: ["Java", "Swing", "MySQL"],
+          link: "https://github.com/ratihsal/Bukuin.git"
+        },
+        {
+          title: "Visual Programming",
+          desc: "Quiz app",
+          tech: ["C#", "WinForms", "SQL"],
+          link: "https://github.com/ratihsal/project-quiz.git"
+        },
+        {
+          title: "Mobile Development",
+          desc: "Laundry app",
+          tech: ["Java", "Database"],
+          link: "https://github.com/ratihsal/Laundry_Apps.git"
+        }
+      ];
+
+      const particles = React.useMemo(() => {
+        return Array.from({ length: 20 }, (_, i) => ({
+          id: i,
+          top: Math.random() * 100,
+          left: Math.random() * 100,
+          size: Math.random() * 4 + 2
+        }));
+      }, []);
+
+      // CHECK SCREEN SIZE
+      React.useEffect(() => {
+        const check = () => setIsDesktop(window.innerWidth > 768);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
+      }, []);
+
+      // TYPING EFFECT
+      React.useEffect(() => {
+        let timeout;
+
+        if (charIndex < roles[roleIndex].length) {
+          timeout = setTimeout(() => {
+            setText((prev) => prev + roles[roleIndex][charIndex]);
+            setCharIndex((prev) => prev + 1);
+          }, 80);
+        } else {
+          timeout = setTimeout(() => {
+            setText("");
+            setCharIndex(0);
+            setRoleIndex((prev) => (prev + 1) % roles.length);
+          }, 1500);
+        }
+
+        return () => clearTimeout(timeout);
+      }, [charIndex, roleIndex]);
+
+      return (
+        <div>
+          {/* PARTICLES */}
+          {isDesktop &&
+            particles.map((p) => (
+              <div
+                key={p.id}
+                className="particle"
+                style={{
+                  top: p.top + "%",
+                  left: p.left + "%",
+                  width: p.size + "px",
+                  height: p.size + "px"
+                }}
+              />
+            ))}
+
+          <div className="content-layer">
+            {/* NAVBAR */}
+            <nav className="nav-solid px-6 py-4 flex items-center justify-between">
+              <div className="text-2xl font-semibold neon-text">Ratih</div>
+
+              <div className="hidden md:flex gap-6 text-sm md:text-base">
+                <a href="#home" className="hover:text-[#A78BFA] transition">Home</a>
+                <a href="#about" className="hover:text-[#A78BFA] transition">About</a>
+                <a href="#skills" className="hover:text-[#A78BFA] transition">Skills</a>
+                <a href="#projects" className="hover:text-[#A78BFA] transition">Projects</a>
+                <a href="#contact" className="hover:text-[#A78BFA] transition">Contact</a>
+              </div>
+            </nav>
+
+            {/* HERO */}
+            <section
+              id="home"
+              className="min-h-screen flex flex-col items-center justify-center text-center px-6"
+            >
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                Hi, I'm <span className="neon-text">Ratih Salsabila</span>
+              </h1>
+
+              <div className="mt-4 text-lg md:text-2xl text-[#A78BFA] min-h-[40px]">
+                {text} |
+              </div>
+
+              <p className="mt-6 max-w-2xl text-gray-300 leading-relaxed">
+                I create elegant, functional, and user-friendly digital experiences
+                with a strong interest in web development, Java programming, and UI/UX design.
+              </p>
+            </section>
+
+            {/* ABOUT */}
+            <section id="about" className="text-center px-6 max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl neon-text mb-6">About Me</h2>
+              <div className="glass rounded-2xl p-8">
+                <p className="leading-relaxed text-gray-200">
+                  My name is Ratih Salsabila. I enjoy transforming problems into
+                  meaningful solutions through design and programming. I am passionate
+                  about building projects that are not only functional, but also visually
+                  engaging and easy to use.
+                </p>
+              </div>
+            </section>
+
+            {/* SKILLS */}
+            <section id="skills" className="px-6 max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl text-center neon-text mb-10">Skills</h2>
+
+              <div className="glass rounded-2xl p-8">
+                {skills.map((s, i) => (
+                  <div key={i} className="mb-6">
+                    <div className="flex justify-between mb-2">
+                      <p>{s.name}</p>
+                      <p>{s.progress}%</p>
+                    </div>
+                    <div className="skill-bar">
+                      <div
+                        className="skill-progress"
+                        style={{ width: s.progress + "%" }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* PROJECTS */}
+            <section id="projects" className="px-6 max-w-6xl mx-auto">
+              <h2 className="text-3xl md:text-4xl text-center neon-text mb-10">Projects</h2>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects.map((p, i) => (
+                  <a
+                    key={i}
+                    href={p.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="glass p-6 rounded-2xl hover:scale-[1.02] transition duration-300"
+                  >
+                    <h3 className="text-xl mb-2">{p.title}</h3>
+                    <p className="text-gray-300 mb-4">{p.desc}</p>
+
+                    <div className="flex flex-wrap gap-2">
+                      {p.tech.map((tech, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs px-3 py-1 rounded-full bg-white/10 border border-white/10"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+
+            {/* CONTACT */}
+            <section id="contact" className="text-center px-6 pb-20 max-w-3xl mx-auto">
+              <h2 className="text-3xl md:text-4xl neon-text mb-6">Contact</h2>
+              <div className="glass rounded-2xl p-8">
+                <p className="text-lg">24050974001@mhs.unesa.ac.id</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
